@@ -1,64 +1,15 @@
-```
-# Dependencies
-.gradle/
-target/
-
-# Compiled files
-*.class
-*.jar
-*.war
-*.ear
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs and temp files
-*.log
-*.tmp
-
-# OS
-.DS_Store
 Thumbs.db
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Python (if present)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-venv/
-.venv/
-.env
-.env.local
-*.env.*
-.mypy_cache/
-.pytest_cache/
-
-# Node.js (if present)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Build outputs
-dist/
+.DS_Store
+.gradle
 build/
-*.out
-*.exe
-*.dll
-*.so
-*.a
-```
+target/
+out/
+.micronaut/
+.idea
+*.iml
+*.ipr
+*.iws
+.project
+.settings
+.classpath
+.factorypath
