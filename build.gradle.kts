@@ -17,10 +17,14 @@ repositories {
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
-    implementation("io.micronaut.kafka:micronaut-kafka")
+
+    //implementation("io.micronaut.kafka:micronaut-kafka")
+    implementation("io.micronaut:micronaut-management")
+    implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    compileOnly("io.micronaut:micronaut-http-client")
+
     runtimeOnly("ch.qos.logback:logback-classic")
+
     testImplementation("io.micronaut:micronaut-http-client")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
