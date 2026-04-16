@@ -3,4 +3,4 @@ defaultPackage: abs.zer0
 testFramework: junit
 sourceLanguage: java
 buildTool: gradle_kotlin
-features: [app-name, graalvm, gradle, http-client-test, java, java-application, junit, kafka, logback, micronaut-aot, micronaut-build, micronaut-http-validation, netty-server, properties, readme, serialization-jackson, shade, static-resources, test-resources]
+features: [app-name, awaitility, graalvm, gradle, http-client-test, jackson-xml, java, java-application, junit, kafka, logback, management, micronaut-aot, micronaut-build, micronaut-http-validation, netty-server, openapi, reactor, readme, retry, serialization-jackson, shade, static-resources, swagger-ui, testcontainers, yaml, yaml-build]

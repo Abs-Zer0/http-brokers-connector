@@ -1,7 +1,6 @@
 plugins {
     id("io.micronaut.application") version "4.6.2"
     id("com.gradleup.shadow") version "8.3.9"
-    id("io.micronaut.test-resources") version "4.6.2"
     id("io.micronaut.aot") version "4.6.2"
 }
 
@@ -16,16 +15,30 @@ repositories {
 
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
 
-    //implementation("io.micronaut.kafka:micronaut-kafka")
+    implementation("io.micrometer:context-propagation")
     implementation("io.micronaut:micronaut-management")
+    implementation("io.micronaut:micronaut-retry")
+    implementation("io.micronaut.kafka:micronaut-kafka")
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.xml:micronaut-jackson-xml")
+
+    compileOnly("io.micronaut:micronaut-http-client")
+    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
 
     runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("org.yaml:snakeyaml")
 
     testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("org.apache.commons:commons-compress:1.27.1")
+    testImplementation("org.awaitility:awaitility:4.2.2")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:kafka")
+    testImplementation("org.testcontainers:testcontainers")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -56,9 +69,6 @@ micronaut {
         incremental(true)
         annotations("abs.zer0.*")
     }
-    testResources {
-        sharedServer = true
-    }
     aot {
         // Please review carefully the optimizations enabled below
         // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
@@ -78,10 +88,4 @@ micronaut {
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "25"
 }
-
-
-
-
-
-
 
