@@ -1,0 +1,14 @@
+micronaut:
+  application:
+    name: http-to-kafka-bridge-test
+  server:
+    port: 0
+    host: localhost
+
+kafka:
+  bootstrap-servers: localhost:9092
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    acks: all
+    retries: 1
