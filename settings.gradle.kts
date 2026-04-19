@@ -4,5 +4,5 @@
 
 
 
-rootProject.name="http-to-kafka-bridge"
+rootProject.name="http-brokers-connector"
 
