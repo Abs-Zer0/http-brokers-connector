@@ -20,5 +20,3 @@ kafka:
     value-serializer: org.apache.kafka.common.serialization.StringSerializer
     acks: all
     retries: 3
-    batch-size: 16384
-    buffer-memory: 33554432
