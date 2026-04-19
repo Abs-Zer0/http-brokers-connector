@@ -1,0 +1,5 @@
+
+test-resources:
+  containers:
+    kafka:
+      kraft: true
