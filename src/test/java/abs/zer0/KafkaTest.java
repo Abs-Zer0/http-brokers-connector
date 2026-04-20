@@ -30,11 +30,13 @@ public class KafkaTest {
     void sendMessage(RequestSpecification spec, TestConsumer consumer) {
         spec
                 .given()
+                    .log().all()
                     .body(MESSAGE_BODY)
                     .contentType(ContentType.TEXT)
                 .when()
                     .post("/kafka/" + TOPIC_NAME_1)
                 .then()
+                    .log().all()
                     .statusCode(200)
                     .contentType(ContentType.JSON)
                     .body("topic", equalTo(TOPIC_NAME_1))
