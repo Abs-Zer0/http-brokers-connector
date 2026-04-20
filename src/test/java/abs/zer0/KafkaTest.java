@@ -1,5 +1,6 @@
 package abs.zer0;
 
+import abs.zer0.data.KafkaRecordMetadata;
 import io.micronaut.configuration.kafka.annotation.KafkaListener;
 import io.micronaut.configuration.kafka.annotation.Topic;
 import io.micronaut.http.HttpRequest;
@@ -38,11 +39,11 @@ public class KafkaTest {
     void sendMessage(TestConsumer consumer) {
         final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY)
                 .contentType(MediaType.TEXT_PLAIN_TYPE);
-        final HttpResponse<String> response = httpClient.toBlocking().exchange(request, String.class);
+        final HttpResponse<KafkaRecordMetadata> response = httpClient.toBlocking().exchange(request, KafkaRecordMetadata.class);
 
         assertEquals(HttpStatus.OK, response.status());
         assertNotNull(response.body());
-        assertTrue(response.body().contains(TOPIC_NAME_1));
+        assertEquals(TOPIC_NAME_1, response.body().topic());
 
         await()
                 .atMost(100, TimeUnit.SECONDS)
