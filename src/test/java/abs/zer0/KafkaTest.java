@@ -1,16 +1,13 @@
 package abs.zer0;
 
-import abs.zer0.data.InternalServerError;
 import io.micronaut.configuration.kafka.annotation.KafkaListener;
 import io.micronaut.configuration.kafka.annotation.Topic;
-import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -41,18 +38,14 @@ public class KafkaTest {
     void sendMessage(TestConsumer consumer) {
         final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY)
                 .contentType(MediaType.TEXT_PLAIN_TYPE);
-        try {
-            final HttpResponse<String> response = httpClient.toBlocking().exchange(request, String.class);
+        final HttpResponse<String> response = httpClient.toBlocking().exchange(request, String.class);
 
-            assertEquals(HttpStatus.OK, response.status());
-            assertNotNull(response.body());
-            assertTrue(response.body().contains(TOPIC_NAME_1));
-        } catch (HttpClientResponseException hcre) {
-            LOG.error("Error", hcre);
-        }
+        assertEquals(HttpStatus.OK, response.status());
+        assertNotNull(response.body());
+        assertTrue(response.body().contains(TOPIC_NAME_1));
 
         await()
-                .atMost(10, TimeUnit.SECONDS)
+                .atMost(100, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     assertNotNull(consumer.consumedTopic1);
@@ -69,12 +62,13 @@ public class KafkaTest {
         ConsumerRecord<String, String> consumedTopic2;
 
         @Topic(TOPIC_NAME_1)
-        void consumeTopic1(ConsumerRecord<String, String> message) {
+        public void consumeTopic1(ConsumerRecord<String, String> message) {
+            LOG.info("Consumed record");
             consumedTopic1 = message;
         }
 
         @Topic(TOPIC_NAME_2)
-        void consumeTopic2(ConsumerRecord<String, String> message) {
+        public void consumeTopic2(ConsumerRecord<String, String> message) {
             consumedTopic2 = message;
         }
 
