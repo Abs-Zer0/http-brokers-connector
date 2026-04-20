@@ -8,7 +8,6 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -32,13 +31,13 @@ public class KafkaTest {
     private static final String MESSAGE_BODY = "Text text text ...";
 
     @Inject
-    @Client("/kafka")
     HttpClient httpClient;
 
     @Test
     void sendMessage(TestConsumer consumer) {
-        final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY)
-                .contentType(MediaType.TEXT_PLAIN_TYPE);
+        final HttpRequest<String> request = HttpRequest.POST("/kafka/" + TOPIC_NAME_1, MESSAGE_BODY)
+                .contentType(MediaType.TEXT_PLAIN_TYPE)
+                .accept(MediaType.APPLICATION_JSON_TYPE);
         final HttpResponse<KafkaRecordMetadata> response = httpClient.toBlocking().exchange(request, KafkaRecordMetadata.class);
 
         assertEquals(HttpStatus.OK, response.status());
