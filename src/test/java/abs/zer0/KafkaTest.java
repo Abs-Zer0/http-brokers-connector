@@ -32,7 +32,7 @@ public class KafkaTest {
     @Test
     void sendMessage(TestConsumer consumer) {
         final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY);
-        final HttpResponse<String> response = httpClient.toBlocking().exchange(request);
+        final HttpResponse<String> response = httpClient.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.status());
         assertNotNull(response.body());
