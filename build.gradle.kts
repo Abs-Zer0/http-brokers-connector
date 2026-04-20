@@ -1,7 +1,11 @@
+import io.micronaut.testresources.buildtools.KnownModules.KAFKA
+
 plugins {
     id("io.micronaut.application") version "4.6.2"
     id("com.gradleup.shadow") version "8.3.9"
     id("io.micronaut.aot") version "4.6.2"
+
+    id("io.micronaut.test-resources") version "4.6.2"
 }
 
 version = "0.1"
@@ -35,9 +39,9 @@ dependencies {
     testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("org.apache.commons:commons-compress:1.27.1")
     testImplementation("org.awaitility:awaitility:4.2.2")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:kafka")
-    testImplementation("org.testcontainers:testcontainers")
+    //testImplementation("org.testcontainers:junit-jupiter")
+    //testImplementation("org.testcontainers:kafka")
+    //testImplementation("org.testcontainers:testcontainers")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -82,6 +86,9 @@ micronaut {
         replaceLogbackXml = true
     }
 
+    testResources {
+        additionalModules.add(KAFKA)
+    }
 }
 
 
