@@ -1,4 +1,9 @@
 
+#micronaut:
+#  server:
+#    port: 8080
+#    host: localhost
+
 test-resources:
   containers:
     kafka:

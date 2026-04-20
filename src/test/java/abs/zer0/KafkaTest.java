@@ -1,15 +1,10 @@
 package abs.zer0;
 
-import abs.zer0.data.KafkaRecordMetadata;
 import io.micronaut.configuration.kafka.annotation.KafkaListener;
 import io.micronaut.configuration.kafka.annotation.Topic;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.client.HttpClient;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
@@ -30,19 +26,19 @@ public class KafkaTest {
     private static final String MESSAGE_KEY = "msg-key";
     private static final String MESSAGE_BODY = "Text text text ...";
 
-    @Inject
-    HttpClient httpClient;
-
     @Test
-    void sendMessage(TestConsumer consumer) {
-        final HttpRequest<String> request = HttpRequest.POST("/kafka/" + TOPIC_NAME_1, MESSAGE_BODY)
-                .contentType(MediaType.TEXT_PLAIN_TYPE)
-                .accept(MediaType.APPLICATION_JSON_TYPE);
-        final HttpResponse<KafkaRecordMetadata> response = httpClient.toBlocking().exchange(request, KafkaRecordMetadata.class);
-
-        assertEquals(HttpStatus.OK, response.status());
-        assertNotNull(response.body());
-        assertEquals(TOPIC_NAME_1, response.body().topic());
+    void sendMessage(RequestSpecification spec, TestConsumer consumer) {
+        spec
+                .given()
+                    .body(MESSAGE_BODY)
+                    .contentType(ContentType.TEXT)
+                .when()
+                    .post("/kafka/" + TOPIC_NAME_1)
+                .then()
+                    .statusCode(200)
+                    .contentType(ContentType.JSON)
+                    .body("topic", equalTo(TOPIC_NAME_1))
+        ;
 
         await()
                 .atMost(100, TimeUnit.SECONDS)
