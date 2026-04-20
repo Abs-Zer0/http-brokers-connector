@@ -1,4 +1,6 @@
 import io.micronaut.testresources.buildtools.KnownModules.KAFKA
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogging
 
 plugins {
     id("io.micronaut.application") version "4.6.2"
@@ -94,5 +96,13 @@ micronaut {
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "25"
+}
+
+
+tasks.withType<Test> {
+    testLogging {
+        //events ("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }
 
