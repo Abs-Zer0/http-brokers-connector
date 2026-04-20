@@ -5,6 +5,7 @@ import io.micronaut.configuration.kafka.annotation.Topic;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -31,7 +32,9 @@ public class KafkaTest {
 
     @Test
     void sendMessage(TestConsumer consumer) {
-        final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY);
+        final HttpRequest<String> request = HttpRequest.POST(TOPIC_NAME_1, MESSAGE_BODY)
+                .contentType(MediaType.TEXT_PLAIN_TYPE)
+                .accept(MediaType.APPLICATION_JSON_TYPE);
         final HttpResponse<String> response = httpClient.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.status());
