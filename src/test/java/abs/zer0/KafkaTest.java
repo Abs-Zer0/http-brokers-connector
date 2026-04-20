@@ -36,7 +36,7 @@ public class KafkaTest {
                 .when()
                     .post("/kafka/" + TOPIC_NAME_1)
                 .then()
-                    .log().all()
+                    .log().ifError()
                     .statusCode(200)
                     .contentType(ContentType.JSON)
                     .body("topic", equalTo(TOPIC_NAME_1))
