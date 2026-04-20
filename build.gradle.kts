@@ -1,6 +1,5 @@
 import io.micronaut.testresources.buildtools.KnownModules.KAFKA
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogging
 
 plugins {
     id("io.micronaut.application") version "4.6.2"
