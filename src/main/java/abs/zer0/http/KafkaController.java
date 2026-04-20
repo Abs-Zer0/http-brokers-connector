@@ -1,6 +1,7 @@
 package abs.zer0.http;
 
 import abs.zer0.brokers.KafkaBroker;
+import abs.zer0.data.KafkaRecordMetadata;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.version.annotation.Version;
 import io.micronaut.http.HttpRequest;
@@ -8,10 +9,10 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 @Controller(value = "/kafka", produces = {
         MediaType.APPLICATION_JSON,
@@ -39,7 +40,7 @@ public class KafkaController {
 
     @Post("{topic}{/key}")
     @Version("1")
-    public Mono<RecordMetadata> sendMessageV1(
+    public Mono<KafkaRecordMetadata> sendMessageV1(
             String topic,
             @Nullable String key,
             HttpRequest<String> request
@@ -51,7 +52,13 @@ public class KafkaController {
         );
         populateHeaders(message, request);
 
-        return kafka.sendMessageV1(message);
+        return kafka.sendMessageV1(message)
+                .map(recordMetadata -> new KafkaRecordMetadata(
+                        recordMetadata.topic(),
+                        recordMetadata.partition(),
+                        recordMetadata.offset(),
+                        Instant.ofEpochMilli(recordMetadata.timestamp())
+                ));
     }
 
     private void populateHeaders(ProducerRecord<String, String> message, HttpRequest<String> request) {
