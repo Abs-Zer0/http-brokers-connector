@@ -37,7 +37,8 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("org.yaml:snakeyaml")
 
-    testImplementation("io.micronaut:micronaut-http-client")
+    //testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("io.micronaut.test:micronaut-test-rest-assured")
     testImplementation("org.apache.commons:commons-compress:1.27.1")
     testImplementation("org.awaitility:awaitility:4.2.2")
     //testImplementation("org.testcontainers:junit-jupiter")
