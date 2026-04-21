@@ -43,12 +43,12 @@ public class KafkaController {
     public Mono<KafkaRecordMetadata> sendMessageV1(
             String topic,
             @Nullable String key,
-            HttpRequest<String> request
+            HttpRequest<?> request
     ) {
         ProducerRecord<String, String> message = new ProducerRecord<>(
                 topic,
                 key,
-                request.getBody().orElse("")
+                request.getBody(String.class).orElse(null)
         );
         populateHeaders(message, request);
 
@@ -61,7 +61,7 @@ public class KafkaController {
                 ));
     }
 
-    private void populateHeaders(ProducerRecord<String, String> message, HttpRequest<String> request) {
+    private void populateHeaders(ProducerRecord<String, String> message, HttpRequest<?> request) {
         request.getHeaders().forEachValue((name, value) -> {
             if (name != null && !name.isEmpty()) {
                 message.headers().add(name, value.getBytes(StandardCharsets.UTF_8));
