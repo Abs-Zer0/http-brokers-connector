@@ -50,6 +50,7 @@ public class KafkaTest {
                     .contentType(ContentType.TEXT)
                 .when()
                     .post("/kafka/" + TOPIC_NAME_1)
+                .then()
                 .extract()
                     .response()
         ;
