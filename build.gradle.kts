@@ -102,9 +102,9 @@ tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative"
 
 tasks.withType<Test> {
     testLogging {
-        events("PASSED", "SKIPPED", "FAILED", "STANDARD_ERROR")
+        //events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
         exceptionFormat = TestExceptionFormat.FULL
-        //showStandardStreams = true
+        showStandardStreams = true
     }
 }
 
