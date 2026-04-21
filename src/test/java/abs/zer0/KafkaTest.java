@@ -28,6 +28,7 @@ public class KafkaTest {
 
     @Test
     void sendMessage(RequestSpecification spec, TestConsumer consumer) {
+        /*
         spec
                 .given()
                     .log().all()
@@ -41,6 +42,18 @@ public class KafkaTest {
                     .contentType(ContentType.JSON)
                     .body("topic", equalTo(TOPIC_NAME_1))
         ;
+        */
+        var response = spec
+                .given()
+                    .log().all()
+                    .body(MESSAGE_BODY)
+                    .contentType(ContentType.TEXT)
+                .when()
+                    .post("/kafka/" + TOPIC_NAME_1)
+                .extract()
+                    .response()
+        ;
+        LOG.info("Response: {}", response);
 
         await()
                 .atMost(100, TimeUnit.SECONDS)
