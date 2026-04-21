@@ -97,6 +97,7 @@ public class KafkaTest {
         @Topic(TOPIC_NAME_1)
         public void consume(ConsumerRecord<String, String> message) {
             consumed = message;
+            LOG.info("Consumed: {}", consumed);
         }
 
     }
@@ -109,6 +110,7 @@ public class KafkaTest {
         @Topic(TOPIC_NAME_2)
         public void consume(ConsumerRecord<String, String> message) {
             consumed = message;
+            LOG.info("Consumed: {}", consumed);
         }
 
     }
