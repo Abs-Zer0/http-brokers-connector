@@ -23,65 +23,92 @@ public class KafkaTest {
 
     private static final String TOPIC_NAME_1 = "test-topic.1";
     private static final String TOPIC_NAME_2 = "another-topic.2";
-    private static final String MESSAGE_KEY = "msg-key";
-    private static final String MESSAGE_BODY = "Text text text ...";
 
     @Test
-    void sendMessage(RequestSpecification spec, TestConsumer consumer) {
-        /*
+    void sendMessageTopic1(RequestSpecification spec, Consumer1 consumer) {
+        final String body = "Text message without key and headers";
+
         spec
                 .given()
                     .log().all()
-                    .body(MESSAGE_BODY)
+                    .body(body)
                     .contentType(ContentType.TEXT)
                 .when()
                     .post("/kafka/" + TOPIC_NAME_1)
                 .then()
-                    .log().ifError()
+                    .log().all()
                     .statusCode(200)
                     .contentType(ContentType.JSON)
                     .body("topic", equalTo(TOPIC_NAME_1))
         ;
-        */
-        var response = spec
-                .given()
-                    .log().all()
-                    .body(MESSAGE_BODY)
-                    .contentType(ContentType.TEXT)
-                .when()
-                    .post("/kafka/" + TOPIC_NAME_1)
-                .then()
-                .extract()
-                    .response()
-        ;
-        LOG.info("Response: {}", response);
 
         await()
-                .atMost(100, TimeUnit.SECONDS)
+                .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    assertNotNull(consumer.consumedTopic1);
-                    assertNull(consumer.consumedTopic1.key());
-                    assertEquals(MESSAGE_BODY, consumer.consumedTopic1.value());
-                });
-        consumer.consumedTopic1 = null;
+                    assertNotNull(consumer.consumed);
+                    assertEquals(TOPIC_NAME_1, consumer.consumed.topic());
+                    assertNull(consumer.consumed.key());
+                    assertEquals(body, consumer.consumed.value());
+                })
+        ;
+
+        consumer.consumed = null;
+    }
+
+    @Test
+    void sendMessageTopic2(RequestSpecification spec, Consumer2 consumer) {
+        final String body = "Text message without key and headers";
+
+        spec
+                .given()
+                    .log().all()
+                    .body(body)
+                    .contentType(ContentType.TEXT)
+                .when()
+                    .post("/kafka/" + TOPIC_NAME_2)
+                .then()
+                    .log().all()
+                    .statusCode(200)
+                    .contentType(ContentType.JSON)
+                    .body("topic", equalTo(TOPIC_NAME_2))
+        ;
+
+        await()
+                .atMost(10, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    assertNotNull(consumer.consumed);
+                    assertEquals(TOPIC_NAME_2, consumer.consumed.topic());
+                    assertNull(consumer.consumed.key());
+                    assertEquals(body, consumer.consumed.value());
+                })
+        ;
+
+        consumer.consumed = null;
+    }
+
+
+    @KafkaListener
+    static class Consumer1 {
+
+        ConsumerRecord<String, String> consumed;
+
+        @Topic(TOPIC_NAME_1)
+        public void consume(ConsumerRecord<String, String> message) {
+            consumed = message;
+        }
+
     }
 
     @KafkaListener
-    static class TestConsumer {
+    static class Consumer2 {
 
-        ConsumerRecord<String, String> consumedTopic1;
-        ConsumerRecord<String, String> consumedTopic2;
-
-        @Topic(TOPIC_NAME_1)
-        public void consumeTopic1(ConsumerRecord<String, String> message) {
-            LOG.info("Consumed record");
-            consumedTopic1 = message;
-        }
+        ConsumerRecord<String, String> consumed;
 
         @Topic(TOPIC_NAME_2)
-        public void consumeTopic2(ConsumerRecord<String, String> message) {
-            consumedTopic2 = message;
+        public void consume(ConsumerRecord<String, String> message) {
+            consumed = message;
         }
 
     }

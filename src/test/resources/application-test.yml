@@ -1,0 +1,16 @@
+
+#micronaut:
+#  server:
+#    port: 8080
+#    host: localhost
+
+kafka:
+  producers:
+    default:
+      key.serializer: org.apache.kafka.common.serialization.StringSerializer
+      value.serializer: org.apache.kafka.common.serialization.StringSerializer
+
+test-resources:
+  containers:
+    kafka:
+      kraft: true
