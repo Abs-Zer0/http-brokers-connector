@@ -50,6 +50,7 @@ public class KafkaController {
             @PathVariable @Nullable String key,
             HttpRequest<?> request
     ) {
+        LOG.info("HttpRequest: {}", request);
         ProducerRecord<String, String> message = new ProducerRecord<>(
                 topic,
                 key,
