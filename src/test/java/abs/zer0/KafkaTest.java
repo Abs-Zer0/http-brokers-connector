@@ -33,7 +33,7 @@ public class KafkaTest {
                     .log().all()
                     .body(body)
                     .contentType(ContentType.TEXT)
-                    .header("Content-Length", body.getBytes("UTF-8").length)
+                    .header("Content-Length", body.getBytes().length)
                 .when()
                     .post("/kafka/" + TOPIC_NAME_1)
                 .then()
