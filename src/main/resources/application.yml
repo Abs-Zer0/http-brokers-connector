@@ -1,7 +1,18 @@
+
 micronaut:
   application:
-    name: http-to-kafka-bridge
+    name: http-brokers-connector
+  server:
+    port: 8080
+    host: localhost
   router:
+    versioning:
+      enabled: true
+      default-version: 1
+      uri-path:
+        enabled: true
+        prefix: "v"
+        parameter-position: 1
     static-resources:
       swagger:
         paths: classpath:META-INF/swagger
@@ -9,9 +20,9 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
-  server:
-    port: 8080
-    host: localhost
+  openapi:
+    versioning:
+      enabled: true
 
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}

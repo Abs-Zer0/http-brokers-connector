@@ -7,10 +7,9 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,13 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @MicronautTest
 public class KafkaTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaTest.class);
+    private static final String TOPIC_A = "test-topic.a";
+    private static final String TOPIC_B = "another-topic.b";
 
-    private static final String TOPIC_NAME_1 = "test-topic.1";
-    private static final String TOPIC_NAME_2 = "another-topic.2";
+    private static final Map<String, BlockingQueue<ConsumerRecord<String, String>>> CONSUMED_MESSAGES = Map.of(
+            TOPIC_A, new LinkedBlockingQueue<>(),
+            TOPIC_B, new LinkedBlockingQueue<>()
+    );
 
     @Test
-    void sendMessageTopic1(RequestSpecification spec, Consumer1 consumer) {
+    void v1TopicA(RequestSpecification spec) {
         final String body = "Text message without key and headers";
 
         spec
@@ -33,32 +35,31 @@ public class KafkaTest {
                     .log().all()
                     .body(body)
                     .contentType(ContentType.TEXT)
-                    .header("Content-Length", body.getBytes().length)
                 .when()
-                    .post("/kafka/" + TOPIC_NAME_1)
+                    .post("/kafka/v1/" + TOPIC_A)
                 .then()
                     .log().all()
                     .statusCode(200)
                     .contentType(ContentType.JSON)
-                    .body("topic", equalTo(TOPIC_NAME_1))
+                    .body("topic", equalTo(TOPIC_A))
         ;
 
         await()
                 .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    assertNotNull(consumer.consumed);
-                    assertEquals(TOPIC_NAME_1, consumer.consumed.topic());
-                    assertNull(consumer.consumed.key());
-                    assertEquals(body, consumer.consumed.value());
+                    final ConsumerRecord<String, String> consumed = CONSUMED_MESSAGES.get(TOPIC_A).poll(1, TimeUnit.SECONDS);
+
+                    assertNotNull(consumed);
+                    assertEquals(TOPIC_A, consumed.topic());
+                    assertNull(consumed.key());
+                    assertEquals(body, consumed.value());
                 })
         ;
-
-        consumer.consumed = null;
     }
 
     @Test
-    void sendMessageTopic2(RequestSpecification spec, Consumer2 consumer) {
+    void v2TopicB(RequestSpecification spec) {
         final String body = "Text message without key and headers";
 
         spec
@@ -67,51 +68,40 @@ public class KafkaTest {
                     .body(body)
                     .contentType(ContentType.TEXT)
                 .when()
-                    .post("/kafka/" + TOPIC_NAME_2)
+                    .post("/kafka/v1/" + TOPIC_B)
                 .then()
                     .log().all()
                     .statusCode(200)
                     .contentType(ContentType.JSON)
-                    .body("topic", equalTo(TOPIC_NAME_2))
+                    .body("topic", equalTo(TOPIC_B))
         ;
 
         await()
                 .atMost(10, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    assertNotNull(consumer.consumed);
-                    assertEquals(TOPIC_NAME_2, consumer.consumed.topic());
-                    assertNull(consumer.consumed.key());
-                    assertEquals(body, consumer.consumed.value());
+                    final ConsumerRecord<String, String> consumed = CONSUMED_MESSAGES.get(TOPIC_B).poll(1, TimeUnit.SECONDS);
+
+                    assertNotNull(consumed);
+                    assertEquals(TOPIC_B, consumed.topic());
+                    assertNull(consumed.key());
+                    assertEquals(body, consumed.value());
                 })
         ;
-
-        consumer.consumed = null;
     }
 
 
     @KafkaListener
-    static class Consumer1 {
+    static class TestConsumer {
 
-        ConsumerRecord<String, String> consumed;
-
-        @Topic(TOPIC_NAME_1)
-        public void consume(ConsumerRecord<String, String> message) {
-            consumed = message;
-            LOG.info("Consumed: {}", consumed);
+        @Topic(TOPIC_A)
+        public void consumeTopicA(ConsumerRecord<String, String> record) {
+            CONSUMED_MESSAGES.get(TOPIC_A).add(record);
         }
 
-    }
-
-    @KafkaListener
-    static class Consumer2 {
-
-        ConsumerRecord<String, String> consumed;
-
-        @Topic(TOPIC_NAME_2)
-        public void consume(ConsumerRecord<String, String> message) {
-            consumed = message;
-            LOG.info("Consumed: {}", consumed);
+        @Topic(TOPIC_B)
+        public void consumeTopicB(ConsumerRecord<String, String> record) {
+            CONSUMED_MESSAGES.get(TOPIC_B).add(record);
         }
 
     }
