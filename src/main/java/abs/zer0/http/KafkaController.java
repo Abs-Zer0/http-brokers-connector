@@ -46,7 +46,7 @@ public class KafkaController {
         this.kafka = kafka;
     }
 
-    @Post("{topic}{/key}")
+    @Post("v1/{topic}{/key}")
     @Version("1")
     @ExecuteOn(TaskExecutors.VIRTUAL)
     public HttpResponse<KafkaRecordMetadata> sendMessageV1(
