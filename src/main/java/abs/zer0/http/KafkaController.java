@@ -48,7 +48,7 @@ public class KafkaController {
     public Mono<KafkaRecordMetadata> sendMessageV1(
             @PathVariable  String topic,
             @PathVariable @Nullable String key,
-            HttpRequest<?> request
+            HttpRequest<String> request
     ) {
         LOG.info("HttpRequest: {}", request.getBody());
         ProducerRecord<String, String> message = new ProducerRecord<>(
