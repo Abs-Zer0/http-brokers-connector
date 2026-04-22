@@ -10,6 +10,8 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +35,8 @@ import java.time.Instant;
 })
 public class KafkaController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaController.class);
+
     private final KafkaBroker kafka;
 
     KafkaController(KafkaBroker kafka) {
@@ -52,6 +56,7 @@ public class KafkaController {
                 request.getBody(String.class).orElse(null)
         );
         populateHeaders(message, request);
+        LOG.info("KAFKA ProducerRecord: {}", message);
 
         return kafka.sendMessageV1(message)
                 .map(recordMetadata -> new KafkaRecordMetadata(
