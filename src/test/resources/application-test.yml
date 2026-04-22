@@ -24,6 +24,11 @@ micronaut:
     versioning:
       enabled: true
 
+  logging:
+    level:
+      root: INFO
+      abs.zer0: DEBUG
+
 kafka:
   producers:
     default:

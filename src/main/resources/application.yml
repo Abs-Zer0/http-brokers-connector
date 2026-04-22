@@ -24,6 +24,11 @@ micronaut:
     versioning:
       enabled: true
 
+  logging:
+    level:
+      root: INFO
+      abs.zer0: INFO
+
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   producers:
