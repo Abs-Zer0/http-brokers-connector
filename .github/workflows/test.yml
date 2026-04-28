@@ -1,0 +1,30 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'src/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'gradle/wrapper/**'
+
+jobs:
+  test:
+    name: Unit testing
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Prepare repository
+        uses: actions/checkout@v6
+      - name: Prepare JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+      - name: Run tests
+        run: ./gradlew test

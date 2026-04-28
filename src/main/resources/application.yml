@@ -1,0 +1,39 @@
+
+micronaut:
+  application:
+    name: http-brokers-connector
+  server:
+    port: 8080
+    host: localhost
+  router:
+    versioning:
+      enabled: true
+      default-version: 1
+      uri-path:
+        enabled: true
+        prefix: "v"
+        parameter-position: 1
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+  openapi:
+    versioning:
+      enabled: true
+
+  logging:
+    level:
+      root: INFO
+      abs.zer0: INFO
+
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  producers:
+    default:
+      key.serializer: org.apache.kafka.common.serialization.StringSerializer
+      value.serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3

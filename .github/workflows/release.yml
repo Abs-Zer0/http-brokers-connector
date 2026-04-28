@@ -1,0 +1,83 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'gradle/wrapper/**'
+
+permissions:
+  contents: write
+
+env:
+  GRADLE_OPTS: '-Dorg.gradle.parallel=true -Dorg.gradle.caching=true'
+  REGISTRY_JVM: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+  REGISTRY_NATIVE: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}-native
+
+jobs:
+  extract-version:
+    name: Prepare ENV
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: version
+        name: Extract version from Micronaut project
+        run: |
+          VERSION=${grep -oP 'version\s*=\s*"\K[^"]+' build.gradle.kts)
+          if [ -z "$VERSION" ]; then echo "Version not found!" && exit 1; fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - id: date
+        name: Extract current date
+        run: echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+
+  docker-jvm:
+    name: Build Docker JVM
+    runs-on: ubuntu-24.04
+    needs: extract-version
+    steps:
+      - name: Prepare repository
+        uses: actions/checkout@v6
+      - name: Prepare JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+      - name: Build
+        run: ./gradlew assemble
+      - name: Show files
+        run: ll -aR build
+        env:
+          PROJECT_VERSION: ${{ needs.extract-version.outputs.version }}
+          DATE: ${{ needs.extract-version.outputs.date }}
+
+  docker-native:
+    name: Build Docker Native-Image
+    runs-on: ubuntu-24.04
+    needs: extract-version
+    steps:
+      - name: Prepare repository
+        uses: actions/checkout@v6
+      - name: Prepare GraalVM
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: graalvm
+          cache: gradle
+      - name: Build
+        run: ./gradlew nativeCompile
+      - name: Show files
+        run: ll -aR build
+        env:
+          PROJECT_VERSION: ${{ needs.extract-version.outputs.version }}
+          DATE: ${{ needs.extract-version.outputs.date }}
