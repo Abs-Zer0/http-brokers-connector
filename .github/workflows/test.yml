@@ -1,4 +1,5 @@
 name: Run Tests
+
 on:
   push:
     branches:
@@ -14,20 +15,16 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: Unit testing
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
+      - name: Prepare repository
         uses: actions/checkout@v6
-
-      - name: Set up JDK 25
+      - name: Prepare JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '25'
-          distribution: 'temurin'
-          cache: 'gradle'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run tests with Gradle
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+      - name: Run tests
         run: ./gradlew test
