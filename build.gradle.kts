@@ -4,7 +4,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 plugins {
     id("io.micronaut.application") version "4.6.2"
     id("io.micronaut.aot") version "4.6.2"
-    id("io.micronaut.gradle.docker") version "4.6.2"
     id("com.gradleup.shadow") version "8.3.9"
 
     id("io.micronaut.test-resources") version "4.6.2"
@@ -95,14 +94,14 @@ micronaut {
     }
 }
 
-
+/*
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "25"
 }
 tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
     jdkVersion = JavaVersion.VERSION_25
 }
-
+*/
 
 tasks.withType<Test> {
     testLogging {
