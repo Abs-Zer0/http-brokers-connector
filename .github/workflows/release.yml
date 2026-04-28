@@ -33,7 +33,7 @@ jobs:
       - id: version
         name: Extract version from Micronaut project
         run: |
-          VERSION=${grep -oP 'version\s*=\s*"\K[^"]+' build.gradle.kts)
+          VERSION=$(grep -Po '\bversion\s*=\s*"\K.*?(?=")' build.gradle.kts)
           if [ -z "$VERSION" ]; then echo "Version not found!" && exit 1; fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - id: date
