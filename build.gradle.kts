@@ -1,5 +1,6 @@
 import io.micronaut.testresources.buildtools.KnownModules.KAFKA
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.internal.declarativedsl.parsing.main
 
 plugins {
     id("io.micronaut.application") version "4.6.2"
@@ -109,6 +110,15 @@ tasks.withType<Test> {
         //events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
         exceptionFormat = TestExceptionFormat.FULL
         showStandardStreams = true
+    }
+}
+
+
+graalvmNative {
+    binaries {
+        named("main") {
+            buildArgs.add("--initialize-at-build-time=org.codehaus.stax2.typed.Base64Variant")
+        }
     }
 }
 
