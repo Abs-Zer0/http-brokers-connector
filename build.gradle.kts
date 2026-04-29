@@ -103,6 +103,7 @@ tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
 }
 */
 
+
 tasks.withType<Test> {
     testLogging {
         //events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
