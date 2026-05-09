@@ -1,17 +1,11 @@
 name: Build and Release
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'src/**'
-      - 'build.gradle.kts'
-      - 'settings.gradle.kts'
-      - 'gradle.properties'
-      - 'gradlew'
-      - 'gradlew.bat'
-      - 'gradle/wrapper/**'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
 
 permissions:
   contents: write

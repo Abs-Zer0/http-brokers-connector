@@ -1,0 +1,53 @@
+name: Check build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'gradle/wrapper/**'
+
+jobs:
+  build-jar:
+    name: Build Jar
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Prepare repository
+        uses: actions/checkout@v6
+      - name: Prepare JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+      - name: Prepare Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build
+        run: ./gradlew assemble
+      - name: Show files
+        run: ls -ahRF build
+
+  build-native:
+    name: Build Native-Image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Prepare repository
+        uses: actions/checkout@v6
+      - name: Prepare GraalVM
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: graalvm
+          cache: gradle
+      - name: Prepare Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build
+        run: ./gradlew nativeCompile
+      - name: Show files
+        run: ls -ahRF build
