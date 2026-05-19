@@ -1,0 +1,22 @@
+FROM eclipse-temurin:25 AS jre-builder
+WORKDIR /application
+
+ARG PROJECT_NAME
+ARG PROJECT_VERSION
+COPY build/libs/${PROJECT_NAME}-${PROJECT_VERSION}-all-optimized.jar ./runner.jar
+
+RUN $JAVA_HOME/bin/jdeps --print-module-deps --ignore-missing-deps --recursive ./runner.jar > ./modules.txt && \
+    $JAVA_HOME/bin/jlink --add-modules $(cat ./modules.txt) --no-header-files --no-man-pages --output /jre-optimized
+
+
+FROM alpine:3.22.4
+WORKDIR /application
+
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH "${JAVA_HOME}/bin:${PATH}"
+
+COPY --from=jre-builder /jre-optimized $JAVA_HOME
+COPY --from=jre-builder /application/runner.jar ./runner.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "./runner.jar"]

@@ -1,0 +1,8 @@
+FROM alpine:3.22.4
+WORKDIR /application
+
+ARG PROJECT_NAME
+COPY build/native/nativeCompile/${PROJECT_NAME} ./runner
+
+EXPOSE 8080
+ENTRYPOINT ["./runner"]

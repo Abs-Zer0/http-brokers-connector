@@ -12,6 +12,10 @@ on:
       - 'gradlew'
       - 'gradlew.bat'
       - 'gradle/wrapper/**'
+      - 'docker/**'
+
+env:
+  GRADLE_OPTS: '-Dorg.gradle.parallel=true -Dorg.gradle.caching=true'
 
 jobs:
   build-jar:
